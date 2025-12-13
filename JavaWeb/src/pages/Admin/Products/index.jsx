@@ -161,11 +161,20 @@ function ProductManagement() {
 
   // Size management
   const handleSizeToggle = (sizeId) => {
+    setForm((prev) => {
+      const exists = prev.Sizes.some(s => s.sizeId === sizeId);
+      if (exists) {
+        return { ...prev, Sizes: prev.Sizes.filter(s => s.sizeId !== sizeId) };
+      } else {
+        return { ...prev, Sizes: [...prev.Sizes, { sizeId: sizeId, quantity: 1 }] };
+      }
+    });
+  };
+
+  const handleSizeQuantityChange = (sizeId, newQty) => {
     setForm((prev) => ({
       ...prev,
-      Sizes: prev.Sizes.includes(sizeId)
-        ? prev.Sizes.filter((id) => id !== sizeId)
-        : [...prev.Sizes, sizeId],
+      Sizes: prev.Sizes.map(s => s.sizeId === sizeId ? { ...s, quantity: Number(newQty) } : s)
     }));
   };
 
@@ -175,6 +184,8 @@ function ProductManagement() {
     setShowModal(true);
     if (type === "edit" && product) {
       setSelectedProduct(product);
+      // Map legacy/simple size IDs to object structure (default qty 1 if unknown)
+      const mappedSizes = (product.Sizes || []).map(id => ({ sizeId: id, quantity: 1 }));
       setForm({
         Name: product.Name,
         Price: product.Price,
@@ -182,7 +193,7 @@ function ProductManagement() {
         Description: product.Description,
         CategoryId: product.CategoryId,
         Images: product.Images || [],
-        Sizes: product.Sizes || [],
+        Sizes: mappedSizes,
       });
       // Preview gồm ảnh cũ (url) + ảnh mới (nếu có)
       setImagePreviews((product.Images || []).map(img => img.Image));
@@ -265,7 +276,7 @@ function ProductManagement() {
         quantity: Number(form.Quantity),
         description: form.Description,
         categoryId: Number(form.CategoryId),
-        sizeId: form.Sizes,
+        sizes: form.Sizes, // Now array of {sizeId, quantity}
       };
       const formData = new FormData();
       formData.append("product", JSON.stringify(payload));
@@ -300,7 +311,7 @@ function ProductManagement() {
         quantity: Number(form.Quantity),
         description: form.Description,
         categoryId: Number(form.CategoryId),
-        sizeIds: form.Sizes,
+        sizes: form.Sizes, // Now array of {sizeId, quantity}
         oldImageNames: oldImageNames,
       };
       const formData = new FormData();
@@ -747,17 +758,34 @@ function ProductManagement() {
               <div>
                 <label className="block text-sm font-medium mb-1">Size</label>
                 <div className="flex flex-wrap gap-2">
-                  {sizes.map(size => (
-                    <label key={size.SizeId} className="flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.Sizes.includes(size.SizeId)}
-                        onChange={() => handleSizeToggle(size.SizeId)}
-                        className="accent-indigo-600"
-                      />
-                      <span className="text-sm">{size.SizeName}</span>
-                    </label>
-                  ))}
+                  {sizes.map(size => {
+                    const isSelected = form.Sizes.some(s => s.sizeId === size.SizeId);
+                    const currentQty = form.Sizes.find(s => s.sizeId === size.SizeId)?.quantity || 1;
+                    return (
+                      <div key={size.SizeId} className="flex items-center gap-2 bg-indigo-50 p-2 rounded-lg">
+                        <label className="flex items-center gap-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleSizeToggle(size.SizeId)}
+                            className="accent-indigo-600 w-4 h-4"
+                          />
+                          <span className="text-sm font-medium">{size.SizeName}</span>
+                        </label>
+                        {isSelected && (
+                          <input
+                            type="number"
+                            min="1"
+                            value={currentQty}
+                            onChange={(e) => handleSizeQuantityChange(size.SizeId, e.target.value)}
+                            className="w-20 border rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500"
+                            placeholder="SL"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">

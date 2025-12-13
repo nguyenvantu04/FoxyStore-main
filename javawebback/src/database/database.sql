@@ -1145,7 +1145,17 @@ select *from size;
 INSERT INTO product_size (product_id, size_id, quantity)
 SELECT p.product_id, s.size_id, 1000
 FROM product p
-CROSS JOIN size s;
+CROSS JOIN size s
+WHERE NOT EXISTS (
+    SELECT 1 FROM product_size ps 
+    WHERE ps.product_id = p.product_id AND ps.size_id = s.size_id
+);
 select *from product_size;
 
--- insert into review (review_id, comment, rating, time, product_id)--
+-- REVIEW DATA --
+INSERT INTO review (comment, rating, time, product_id, user_id, reply) VALUES
+('Giày đẹp, đi êm chân', 5, NOW(), 180, 2, 'Cảm ơn bạn đã tin tưởng shop!'),
+('Chất lượng tốt so với tầm giá', 4, NOW(), 180, 2, NULL),
+('Giao hàng hơi chậm nhưng giày đẹp', 4, NOW(), 181, 2, NULL),
+('Sản phẩm y hình, rất ưng ý', 5, NOW(), 182, 2, 'Shop rất vui vì bạn hài lòng ạ'),
+('Form giày chuẩn, sẽ ủng hộ tiếp', 5, NOW(), 183, 2, NULL);

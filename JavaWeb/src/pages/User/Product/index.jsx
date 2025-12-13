@@ -32,26 +32,26 @@ function Product() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [checkReview, setCheckReview] = useState(false);
-  console.log("products : ",products);
-  const handleSubmit = async() => {
+  console.log("products : ", products);
+  const handleSubmit = async () => {
     if (!rating || !comment.trim()) {
       alert('Vui lòng chọn số sao và nhập nội dung đánh giá.');
       return;
     }
 
-    try{
-      const response = await request.post(`reviews/create/${id}`,{
-        comment : comment,
+    try {
+      const response = await request.post(`reviews/create/${id}`, {
+        comment: comment,
         rating: rating
-      },{
-        headers:{
-          Authorization :`Bearer ${token}`
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
       })
       // console.log('Đánh giá:', { rating, comment });
       // console.log(response.data);
-      setProduct(pre=> ({
-        ...pre,reviews:[...pre.reviews, response.data.result]
+      setProduct(pre => ({
+        ...pre, reviews: [...pre.reviews, response.data.result]
       }))
       alert("đánh giá thành công")
       // Reset form
@@ -59,8 +59,8 @@ function Product() {
       setComment('');
       setShowReviewForm(false);
     }
-    catch(e){
-      console.log("error",e)
+    catch (e) {
+      console.log("error", e)
     }
     // Xử lý gửi đánh giá tại đây
   };
@@ -139,25 +139,25 @@ function Product() {
       console.log("Loi ", e)
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(products))
-  },[products])
-  const handleOnclickReview=async()=>{
-    try{
-      const response =await request.get(`reviews/check/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-        })
-          setCheckReview(response.data.result)
-        if(!response.data.result){
-          alert("Bạn không thể đánh giá khi chưa mua sản phẩm này")
-          return;
+  }, [products])
+  const handleOnclickReview = async () => {
+    try {
+      const response = await request.get(`reviews/check/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
+      })
+      setCheckReview(response.data.result)
+      if (!response.data.result) {
+        alert("Bạn không thể đánh giá khi chưa mua sản phẩm này")
+        return;
+      }
     }
-    catch(e){
-      console.log("error ",e)
-      if(e.response.data.code==2000){
+    catch (e) {
+      console.log("error ", e)
+      if (e.response.data.code == 2000) {
         alert("Bạn cần đăng nhập để thực hiện chức năng này")
         navigate("/login");
       }
@@ -180,7 +180,7 @@ function Product() {
                 <div className="relative group">
                   <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg">
                     <img
-                      src={`http://localhost:8080/images/${product.images[imageIndex]}.png`}
+                      src={`http://localhost:8080/images/${product.images[imageIndex]}${(product.images[imageIndex] || "").includes('.') ? '' : '.png'}`}
                       alt="Product main view"
                       className="w-full h-full cursor-pointer object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -204,13 +204,13 @@ function Product() {
                     <div
                       key={index}
                       className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all duration-200 ${imageIndex === index
-                          ? 'border-blue-500 shadow-lg'
-                          : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-blue-500 shadow-lg'
+                        : 'border-gray-200 hover:border-gray-300'
                         }`}
                       onClick={() => setImageIndex(index)}
                     >
                       <img
-                        src={`http://localhost:8080/images/${item}.png`}
+                        src={`http://localhost:8080/images/${item}${(item || "").includes('.') ? '' : '.png'}`}
                         alt={`Product thumbnail ${index}`}
                         className="w-full h-full object-cover cursor-pointer"
                       />
@@ -275,8 +275,8 @@ function Product() {
                     <button
                       key={index}
                       className={`w-12 h-12 rounded-xl flex items-center justify-center font-medium transition-all duration-200 ${selectedSize === size.sizeName
-                          ? 'bg-blue-600 text-white shadow-lg transform scale-105'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
+                        ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
                         }`}
                       onClick={() => setSelectedSize(size.sizeName)}
                     >
@@ -360,13 +360,13 @@ function Product() {
                   </div>
                 </div>
               </div>
-                <div className='flex justify-end w-full mt-10'>
-                  <button className='bg-amber-300 rounded-md px-3 py-2 text-xl text-white cursor-pointer'
-                    onClick={()=>handleOnclickReview()}
-                  >
-                      Viết đánh giá
-                  </button>
-                </div>
+              <div className='flex justify-end w-full mt-10'>
+                <button className='bg-amber-300 rounded-md px-3 py-2 text-xl text-white cursor-pointer'
+                  onClick={() => handleOnclickReview()}
+                >
+                  Viết đánh giá
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 package com.example.back.service;
 
 import com.example.back.dto.request.Products.ProductRequestDTO;
+import com.example.back.dto.request.Products.ProductSizeRequestDTO;
 import com.example.back.dto.request.Products.ProductUpdateRequest;
 import com.example.back.dto.response.Product.*;
 import com.example.back.entity.*;
@@ -191,12 +192,13 @@ public class ProductService {
         productRepository.save(product);
         // Lưu size
         Set<ProductSize> productSizes = new HashSet<>();
-        for (Integer sizeId : request.getSizeId()) {
-            Size size = sizeRepository.findById(sizeId)
+        for (ProductSizeRequestDTO sizeReq : request.getSizes()) {
+            Size size = sizeRepository.findById(sizeReq.getSizeId())
                     .orElseThrow(() -> new RuntimeException("Size not found"));
             productSizes.add(ProductSize.builder()
                     .product(product)
                     .size(size)
+                    .quantity(sizeReq.getQuantity())
                     .build());
         }
 
@@ -297,12 +299,13 @@ public class ProductService {
         }
         product.getProductSizes().clear();
         
-        for (Integer sizeId : request.getSizeIds()) {
-            Size size = sizeRepository.findById(sizeId)
+        for (ProductSizeRequestDTO sizeReq : request.getSizes()) {
+            Size size = sizeRepository.findById(sizeReq.getSizeId())
                     .orElseThrow(() -> new RuntimeException("Size not found"));
             product.getProductSizes().add(ProductSize.builder()
                     .product(product)
                     .size(size)
+                    .quantity(sizeReq.getQuantity())
                     .build());
         }
         // product.setProductSizes(productSizes); // No longer needed as we modified the collection directly

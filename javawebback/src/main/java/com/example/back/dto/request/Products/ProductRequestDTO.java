@@ -19,7 +19,7 @@ public class ProductRequestDTO {
     String description;
     Integer categoryId;
     List<MultipartFile> images;
-    List<Integer> sizeId;
+    List<ProductSizeRequestDTO> sizes;
 //    @Data
 //    public static class ImageDTO {
 //        String image;
