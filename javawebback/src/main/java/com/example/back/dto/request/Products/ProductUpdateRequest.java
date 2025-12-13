@@ -20,6 +20,6 @@ public class ProductUpdateRequest {
     String description;
     Integer categoryId;
 
-    List<ProductSizeRequestDTO> sizes; // cập nhật lại size
+    List<ProductRequestDTO.ProductSizeReq> productSizes; // cập nhật lại size
     List<String> oldImageNames; // giữ lại ảnh cũ
 }
