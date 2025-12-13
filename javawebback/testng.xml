@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="LambdaTest Suite" parallel="tests" thread-count="3">
+    
+    <!-- Test 1: Desktop Windows -->
+    <test name="Windows 10 - Chrome">
+        <parameter name="browser" value="Chrome"/>
+        <parameter name="version" value="latest"/>
+        <parameter name="platform" value="Windows 10"/>
+        <classes>
+            <class name="com.example.back.lambdatest.UserOrderLambdaTest"/>
+        </classes>
+    </test>
+
+    <!-- Test 2: Desktop macOS -->
+    <test name="macOS Ventura - Firefox">
+        <parameter name="browser" value="Firefox"/>
+        <parameter name="version" value="latest"/>
+        <parameter name="platform" value="macOS Ventura"/>
+        <classes>
+            <class name="com.example.back.lambdatest.UserOrderLambdaTest"/>
+        </classes>
+    </test>
+
+    <!-- Test 3: Mobile Android -->
+    <test name="Samsung Galaxy S25 pluss - Android 16.0">
+        <parameter name="browser" value="Chrome"/>
+        <parameter name="version" value="16.0"/> <!-- User requested Android 16.0 Emulator -->
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceName" value="Galaxy S25 Ultra"/>
+        <classes>
+            <class name="com.example.back.lambdatest.UserOrderLambdaTest"/>
+        </classes>
+    </test>
+    
+</suite>
