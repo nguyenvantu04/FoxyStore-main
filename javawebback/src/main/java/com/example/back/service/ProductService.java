@@ -126,12 +126,12 @@ public class ProductService {
         List<ProductInfoDTO> dtoList = results.stream().map(row -> new ProductInfoDTO(
                 row[0] != null ? Arrays.asList(((String) row[0]).split(",")) : new ArrayList<>(),
                 (String) row[1],
-                (BigDecimal) row[2],
-                ((Number) row[3]).intValue(),
+                row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO, // price
+                row[3] != null ? ((Number) row[3]).intValue() : 0, // quantity
                 (String) row[4],
-                ((Number) row[5]).intValue(),
+                row[5] != null ? ((Number) row[5]).intValue() : 0, // soldCount
                 row[6] != null ? Arrays.asList(((String) row[6]).split(",")) : new ArrayList<>(),
-                ((Number) row[7]).intValue(),
+                row[7] != null ? ((Number) row[7]).intValue() : 0, // productId
                 (String) row[8]
         )).toList();
 
