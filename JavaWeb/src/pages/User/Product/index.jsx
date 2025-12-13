@@ -71,6 +71,25 @@ function Product() {
   const navigate = useNavigate();
 
   const incrementQuantity = () => {
+    const sizeInfo = product.productSizeDTOS.find(s => s.sizeName === selectedSize);
+    const maxStock = sizeInfo ? sizeInfo.quantity : product.quantity;
+
+    // Calculate quantity already in cart
+    const cartItem = products.find(p => p.id === product.id && p.sizeName === selectedSize);
+    const currentCartQty = cartItem ? cartItem.quantity : 0;
+
+    if (selectedSize) {
+      if (quantity + currentCartQty >= maxStock) {
+        alert(`Bạn đã có ${currentCartQty} sản phẩm trong giỏ. Kho chỉ còn ${maxStock}. Không thể thêm thêm.`);
+        return;
+      }
+    } else {
+      // Fallback if size not selected (logic implies selecting size first usually, but if not strictly enforced for increment)
+      if (quantity >= maxStock) {
+        alert("Đã đạt giới hạn số lượng trong kho");
+        return;
+      }
+    }
     setQuantity(prev => prev + 1);
   };
 
@@ -110,6 +129,20 @@ function Product() {
       alert("Bạn chưa chọn size ")
       return;
     }
+
+    // Check stock
+    const sizeInfo = product.productSizeDTOS.find(s => s.sizeName === selectedSize);
+    const maxStock = sizeInfo ? sizeInfo.quantity : 0;
+
+    // Calculate quantity already in cart
+    const cartItem = products.find(p => p.id === product.id && p.sizeName === selectedSize);
+    const currentCartQty = cartItem ? cartItem.quantity : 0;
+
+    if (quantity + currentCartQty > maxStock) {
+      alert(`Số lượng không đủ. Bạn đã có ${currentCartQty} trong giỏ và kho chỉ còn ${maxStock}.`);
+      return;
+    }
+
     if (!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ")) {
       return;
     }
@@ -132,9 +165,13 @@ function Product() {
       }
     }
     catch (e) {
-      if (e.response.data.code == 2000) {
+      if (e.response && e.response.data && e.response.data.code == 2000) {
         alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
         navigate("/login")
+      } else if (e.response && e.response.data && e.response.data.message) {
+        alert("Lỗi: " + e.response.data.message);
+      } else {
+        alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
       }
       console.log("Loi ", e)
     }
@@ -309,7 +346,10 @@ function Product() {
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {product.quantity} sản phẩm có sẵn
+                  {selectedSize
+                    ? `${product.productSizeDTOS.find(s => s.sizeName === selectedSize)?.quantity || 0} sản phẩm có sẵn (Size ${selectedSize})`
+                    : `${product.productSizeDTOS.reduce((acc, curr) => acc + curr.quantity, 0)} sản phẩm có sẵn (Tổng)`
+                  }
                 </p>
               </div>
 

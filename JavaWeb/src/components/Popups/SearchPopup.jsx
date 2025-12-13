@@ -9,45 +9,57 @@ import { HiOutlineX } from "react-icons/hi";
 import { LuSearch } from "react-icons/lu";
 import { li } from 'framer-motion/client';
 import ProductItem from '../OtherComponent/ProductItem';
+import { useNavigate } from 'react-router-dom';
 
 
-function SearchPopup({setIsSearch,setIsPopUp}) {
-  const hotSearchs=["Áo sơ mi", "Đồ ngủ nam", "Đồ bơi",]
-  const product=[
+function SearchPopup({ setIsSearch, setIsPopUp }) {
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = React.useState("");
+
+  const handleSearch = () => {
+    if (searchValue.trim()) {
+      navigate(`/product?search=${encodeURIComponent(searchValue.trim())}`);
+      setIsPopUp(false);
+      setIsSearch(false);
+    }
+  };
+
+  const hotSearchs = ["Áo sơ mi", "Đồ ngủ nam", "Đồ bơi",]
+  const product = [
     {
-      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price:"699 000",
-      images:[Image1,Image2]
+      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price: "699 000",
+      images: [Image1, Image2]
     },
     {
-      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price:"699 000",
-      images:[Image1,Image2]
-    },{
-      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price:"699 000",
-      images:[Image1,Image2]
-    },{
-      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price:"699 000",
-      images:[Image1,Image2]
-    },{
-      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price:"699 000",
-      images:[Image1,Image2]
+      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price: "699 000",
+      images: [Image1, Image2]
+    }, {
+      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price: "699 000",
+      images: [Image1, Image2]
+    }, {
+      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price: "699 000",
+      images: [Image1, Image2]
+    }, {
+      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price: "699 000",
+      images: [Image1, Image2]
     },
 
   ]
-  const handleOnclickX=()=>{
+  const handleOnclickX = () => {
     setIsPopUp(false)
     setIsSearch(false)
   }
   return (
     <motion.div
-    className=''
-    initial={{opacity: 0, y: 100}}
-    whileInView={{opacity: 1, y:0}}
-    transition={{duration: 0.5}}
+      className=''
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <div className='mx-3 md:mx-10 z-50 '>
         {/* title */}
@@ -56,38 +68,42 @@ function SearchPopup({setIsSearch,setIsPopUp}) {
             Tìm kiếm
           </p>
           <motion.div className='cursor-pointer bg-gray-100 rounded-3xl p-2'
-            whileHover={{rotate: 90, scale: 1.5, color: "#e43131"} }
-            onClick={()=>handleOnclickX()}
+            whileHover={{ rotate: 90, scale: 1.5, color: "#e43131" }}
+            onClick={() => handleOnclickX()}
           >
-            <HiOutlineX/>
+            <HiOutlineX />
           </motion.div>
         </div>
         {/* input search */}
         <div className=' h-12 md:h-14 px-3 md:px-10 border-gray-200 border-3  flex justify-between items-center rounded-xl relative focus-within:border-black hover:border-black transition-all duration-300 ease-in-out md:text-2xl'>
-          <input type="" 
-          placeholder='Tìm kiếm sản phẩm . . .'
-          className='outline-none h-full w-full'
+          <input
+            type="text"
+            placeholder='Tìm kiếm sản phẩm . . .'
+            className='outline-none h-full w-full'
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <p className='my-icon hover:scale-125'>
-            <LuSearch/>
+          <p className='my-icon hover:scale-125' onClick={handleSearch}>
+            <LuSearch />
           </p>
         </div>
         {/* hot search */}
         <div className=' my-5 md:my-10 text-xl md:text-3xl'>
-            <p>
-              Từ khoá hot
-            </p>
-            <div className='flex flex-wrap my-3 md:my-5'>
-              {
-                hotSearchs.map((item,index)=>{
-                  return(
-                    <li key={index} className='my-icon list-none mx-2 px-3 py-2 my-2 md:px-5 border-[0.5px] rounded-full border-gray-300 text-base md:text-lg '>
-                      {item}
-                    </li>
-                  )
-                })
-              }
-            </div>
+          <p>
+            Từ khoá hot
+          </p>
+          <div className='flex flex-wrap my-3 md:my-5'>
+            {
+              hotSearchs.map((item, index) => {
+                return (
+                  <li key={index} className='my-icon list-none mx-2 px-3 py-2 my-2 md:px-5 border-[0.5px] rounded-full border-gray-300 text-base md:text-lg '>
+                    {item}
+                  </li>
+                )
+              })
+            }
+          </div>
         </div>
         {/* recent products */}
         <div>
@@ -98,15 +114,15 @@ function SearchPopup({setIsSearch,setIsPopUp}) {
           </div>
           {/* list products */}
           <div className='grid grid-cols-2 gap-x-5 lg:gap-x-10 md:grid-cols-4 gap-y-5 md:gap-y-10'>
-              {
-                product.map((item,index)=>{
-                  return(
-                    <li key={index} className='list-none'>
-                      <ProductItem name={item.name} price={item.price} images={item.images}/>
-                    </li>
-                  )
-                })
-              }
+            {
+              product.map((item, index) => {
+                return (
+                  <li key={index} className='list-none'>
+                    <ProductItem name={item.name} price={item.price} images={item.images} />
+                  </li>
+                )
+              })
+            }
           </div>
           <div className='flex justify-center'>
             <button className=' btn-primary px-4 py-3 md:px-8 md:py-5 '>

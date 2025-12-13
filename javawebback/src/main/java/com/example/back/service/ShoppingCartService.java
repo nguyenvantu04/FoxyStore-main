@@ -44,15 +44,20 @@ public class ShoppingCartService {
         Product product =productRepository.findProductWithDetail(cartRequest.getProductId()).orElseThrow(()-> new AppException(ErrorCodes.PRODUCT_NOT_FOUND));
         Size size =sizeRepository.findBySizeName(cartRequest.getSizeName()).orElseThrow(()-> new AppException(ErrorCodes.SIZE_NOT_FOUND));
         ProductSize productSize =productSizeRepository.findBySizeAndProduct(size,product).orElseThrow(()-> new AppException(ErrorCodes.PRODUCT_NOT_FOUND));
-        if(productSize.getQuantity() == null || productSize.getQuantity() < cartRequest.getQuantity()){
-            throw new AppException(ErrorCodes.PRODUCT_QUANTITY_UNAVAILABLE);
-        }
         ShoppingCartDetailId shoppingCartDetailId =ShoppingCartDetailId.builder()
                 .shoppingCartId(shoppingCart.getShoppingCartId())
                 .productSizeId(productSize.getId())
                 .build();
         ShoppingCartDetail shoppingCartDetail =shoppingCartDetailRepository.findByProductSizeAndShoppingCart(productSize,shoppingCart).orElseGet(ShoppingCartDetail::new);
-        Integer quantity = shoppingCartDetail.getQuantity()==null? cartRequest.getQuantity() : cartRequest.getQuantity()+shoppingCartDetail.getQuantity();
+        
+        int currentQtyInCart = shoppingCartDetail.getQuantity() != null ? shoppingCartDetail.getQuantity() : 0;
+        int totalRequested = currentQtyInCart + cartRequest.getQuantity();
+        
+        if(productSize.getQuantity() == null || productSize.getQuantity() < totalRequested){
+            throw new AppException(ErrorCodes.PRODUCT_QUANTITY_UNAVAILABLE);
+        }
+
+        Integer quantity = totalRequested;
         shoppingCartDetail =ShoppingCartDetail.builder()
                 .id(shoppingCartDetailId)
                 .shoppingCart(shoppingCart)
