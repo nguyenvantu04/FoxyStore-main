@@ -26,7 +26,7 @@ qdrant:
 spring:
   port: 8080
   datasource:
-    url: jdbc:mysql://localhost:3306/foxystore?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/foxystore?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: "root"
     password: "1234"
     driver-class-name: com.mysql.cj.jdbc.Driver

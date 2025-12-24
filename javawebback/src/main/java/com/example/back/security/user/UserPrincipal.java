@@ -31,7 +31,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     // Tạo user ap quyen mac dinh la role user
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
                 .collect(Collectors.toList());
 
         return new UserPrincipal(

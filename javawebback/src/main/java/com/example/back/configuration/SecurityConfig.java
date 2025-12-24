@@ -78,9 +78,9 @@ public class SecurityConfig {
 //                    auth.requestMatchers("/api/v1/products/{productId}").permitAll();
 
 
-                    // USER ENDPOINTS từ EndpointConfig
+                    // USER ENDPOINTS từ EndpointConfig - cho phép cả USER và ADMIN
                     EndpointConfig.USER_ENDPOINTS.forEach(endpoint ->
-                            auth.requestMatchers(endpoint.getHttpMethod(), endpoint.getUrl()).hasRole("USER"));
+                            auth.requestMatchers(endpoint.getHttpMethod(), endpoint.getUrl()).hasAnyRole("USER", "ADMIN"));
 
                     // ADMIN ENDPOINTS từ EndpointConfig
                     EndpointConfig.ADMIN_ENDPOINTS.forEach(endpoint ->
@@ -129,7 +129,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));  // địa chỉ frontend
+        // Cho phép cả frontend và JMeter/Postman testing
+        corsConfig.setAllowedOriginPatterns(List.of("*"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         corsConfig.setAllowCredentials(true);
@@ -153,7 +154,9 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        // Token already contains authorities like "ROLE_USER"; avoid double prefixing
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 

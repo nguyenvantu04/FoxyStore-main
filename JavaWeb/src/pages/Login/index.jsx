@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { request } from '../../untils/request.js';
 import authService from '../../untils/auth.js';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
@@ -70,14 +70,24 @@ function Login() {
             const response = await request.post("user/login", user);
             alert("Đăng nhập thành công");
             localStorage.setItem("token", response.data.result.accessToken);
-            const decoded =jwtDecode(response.data.result.accessToken);
-            console.log(decoded);
+            const decoded = jwtDecode(response.data.result.accessToken);
+            console.log("Decoded token:", decoded);
+            console.log("Scope:", decoded.scope);
+
             setTimeout(() => {
-                if(decoded && decoded.scope.includes("USER")){
-                        navigate("/");
-                }
-                else{
-                    navigate("/admin")
+                // Kiểm tra scope - có thể là array hoặc string
+                const scope = decoded.scope || [];
+                const scopeStr = Array.isArray(scope) ? scope.join(" ") : String(scope);
+
+                console.log("Scope string:", scopeStr);
+
+                // Nếu có ADMIN thì đi admin, còn lại đi user
+                if (scopeStr.includes("ADMIN")) {
+                    console.log("Redirecting to admin");
+                    navigate("/admin");
+                } else {
+                    console.log("Redirecting to home");
+                    navigate("/");
                 }
             }, 1000);
         }
