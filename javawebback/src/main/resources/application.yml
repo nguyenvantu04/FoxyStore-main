@@ -83,7 +83,7 @@ app:
 vnpay:
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return-url: http://localhost:5173/order
-  tmn-code: 7NB8GD0M
-  secret-key: DUSQCXTEBGA238ARQ2W6FP1WHW9W2P1U
+  tmn-code: N71LI64E
+  secret-key: LD12B819JS2NYPMHKPPS5GAFJ0DLYOWO
   api-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
 

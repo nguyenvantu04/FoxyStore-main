@@ -40,7 +40,14 @@ public enum ErrorCodes {
     BILL_NOT_FOUND(1501,"bill not found", HttpStatus.NOT_FOUND),
     INVALID_BILL_STATUS(1502,"invalid bill status", HttpStatus.BAD_REQUEST),
 
-    FAVORITE_PRODUCT_NOT_FOUND(1601,"favorite product not found", HttpStatus.NOT_FOUND)
+    FAVORITE_PRODUCT_NOT_FOUND(1601,"favorite product not found", HttpStatus.NOT_FOUND),
+
+    // System overload errors
+    SYSTEM_OVERLOAD(5001, "Hệ thống đang quá tải, vui lòng thử lại sau", HttpStatus.SERVICE_UNAVAILABLE),
+    TOO_MANY_REQUESTS(5002, "Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau", HttpStatus.TOO_MANY_REQUESTS),
+    SERVICE_UNAVAILABLE(5003, "Dịch vụ tạm thời không khả dụng, vui lòng thử lại sau", HttpStatus.SERVICE_UNAVAILABLE),
+    REQUEST_TIMEOUT(5004, "Yêu cầu đã hết thời gian chờ, vui lòng thử lại", HttpStatus.REQUEST_TIMEOUT),
+    DATABASE_OVERLOAD(5005, "Cơ sở dữ liệu đang quá tải, vui lòng thử lại sau", HttpStatus.SERVICE_UNAVAILABLE)
     ;
 
     ErrorCodes(int code, String message, HttpStatus status) {

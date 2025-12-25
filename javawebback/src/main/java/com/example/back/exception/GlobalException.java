@@ -10,6 +10,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 @RestControllerAdvice // Chi dinh cho lop xu li ngoai le chung
 //@ControllerAdvice
@@ -58,5 +61,42 @@ public class GlobalException {
         apiResponse.setCode(404);
         apiResponse.setMessage("Resource not found: " + e.getResourcePath());
         return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+    // Handler cho System Overload Exception
+    @ExceptionHandler(value = SystemOverloadException.class)
+    public ResponseEntity<APIResponse> handleSystemOverloadException(SystemOverloadException e) {
+        ErrorCodes errorCodes = e.getErrorCodes();
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setCode(errorCodes.getCode());
+        apiResponse.setMessage(errorCodes.getMessage());
+        return ResponseEntity.status(errorCodes.getStatus()).body(apiResponse);
+    }
+
+    // Handler cho Database timeout/overload
+    @ExceptionHandler(value = QueryTimeoutException.class)
+    public ResponseEntity<APIResponse> handleQueryTimeoutException(QueryTimeoutException e) {
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setCode(ErrorCodes.DATABASE_OVERLOAD.getCode());
+        apiResponse.setMessage(ErrorCodes.DATABASE_OVERLOAD.getMessage());
+        return ResponseEntity.status(ErrorCodes.DATABASE_OVERLOAD.getStatus()).body(apiResponse);
+    }
+
+    // Handler cho Database connection failure
+    @ExceptionHandler(value = DataAccessResourceFailureException.class)
+    public ResponseEntity<APIResponse> handleDataAccessResourceFailureException(DataAccessResourceFailureException e) {
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setCode(ErrorCodes.DATABASE_OVERLOAD.getCode());
+        apiResponse.setMessage(ErrorCodes.DATABASE_OVERLOAD.getMessage());
+        return ResponseEntity.status(ErrorCodes.DATABASE_OVERLOAD.getStatus()).body(apiResponse);
+    }
+
+    // Handler cho Transaction creation failure (database overload)
+    @ExceptionHandler(value = CannotCreateTransactionException.class)
+    public ResponseEntity<APIResponse> handleCannotCreateTransactionException(CannotCreateTransactionException e) {
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setCode(ErrorCodes.DATABASE_OVERLOAD.getCode());
+        apiResponse.setMessage(ErrorCodes.DATABASE_OVERLOAD.getMessage());
+        return ResponseEntity.status(ErrorCodes.DATABASE_OVERLOAD.getStatus()).body(apiResponse);
     }
 }
